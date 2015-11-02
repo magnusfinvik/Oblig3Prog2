@@ -7,20 +7,31 @@ import static org.junit.Assert.assertTrue;
 
 
 /*
-    lager en stack og en searchOrder liste
-    og lager en parent med plass til alle hjørner
-    og setter alle disse til -1
-    lager en boolean liste isVisited
-    dfs(vertice v)
-        pusher v på stacken og setter v til besøkt
-        for hver nabo til v i listen naboer
-            if(nabo ikke er besøkt)
-                legg til v som forelder til nabo i graph
-        kall dfs(nabo)
-    når alle hjørner er besøkt:
-        while(stacken ikke er tom)
-            legger til øverste element i stack til searchOrder
-   return et tre med v som rot, parent listen og searchOrder
+    PseudoKode for å forklare fremgangsmåten i dfsmetoden
+
+    deklarer stack, søkeOrden, og boolean erBesøkt
+    lager foreldreliste og setter alle til -1
+    setter current til startHjørne
+    push current på stack, add til søkeOrden
+    og sett den til besøkt
+    så lenge stack ikke er tom
+        nabo = finn neste ikke besøkte hjørne (hjelpemetode)
+        hvis nabo = -1
+            pop øverste element fra stack
+        ellers
+            legg til nabo i søkeOrden
+            sett forelder til nabo til current
+            sett at nabo er besøkt
+            push nabo på stacken
+            sett current til nabo
+
+    returner et nytt tre av (startHjørne, foreldreListen, søkeOrden)
+
+    hjelpemetode
+        for hver nabo til current
+            hvis nabo ikke er besøkt
+                returner nabo
+        returner -1 hvis alle naboer er besøkt
 
 */
 public class UnweightedGraphWithStackTest {
@@ -37,9 +48,18 @@ public class UnweightedGraphWithStackTest {
 
 
     @Test
-    public void dfstest_checkThatTheCorrectAmountOfVerticesIsAddedToTheVisitedList() {
+    public void dfstest_checkThatTheCorrectAmountOfVerticesIsAddedToTheVisitedList_goingFromA() {
 
         AbstractGraph<Character>.Tree dfs = graph.dfs(0);
+
+        int numberOfVerticesFound = dfs.getNumberOfVerticesFound();
+
+        assertEquals(4, numberOfVerticesFound);
+    }
+
+    @Test
+    public void dfstest_checkThatTheCorrectNumberOferticesIsVisited_goingFromB () {
+        AbstractGraph<Character>.Tree dfs = graph.dfs(1);
 
         int numberOfVerticesFound = dfs.getNumberOfVerticesFound();
 

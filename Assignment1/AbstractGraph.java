@@ -179,8 +179,11 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 
         while(!stack.isEmpty()){
             int neighbor = getNextUnvisitedVertix(currentVertix, isVisited);
-            if(neighbor == -1)
+            if(neighbor == -1) {
                 stack.pop();
+                if(!stack.isEmpty())
+                    currentVertix = stack.peek();
+            }
             else{
                 searchOrder.add(neighbor);
                 parent[neighbor] = currentVertix;

@@ -178,7 +178,7 @@ public abstract class AbstractGraph<V> implements Graph<V> {
         isVisited[currentVertix] = true;
 
         while(!stack.isEmpty()){
-            int neighbor = getNextUnvisitedNeighbor(currentVertix, isVisited);
+            int neighbor = getNextUnvisitedVertix(currentVertix, isVisited);
             if(neighbor == -1)
                 stack.pop();
             else{
@@ -193,7 +193,7 @@ public abstract class AbstractGraph<V> implements Graph<V> {
         return new Tree(startingVertix, parent, searchOrder);
     }
 
-    private int getNextUnvisitedNeighbor(int current, boolean[] isVisited){
+    private int getNextUnvisitedVertix(int current, boolean[] isVisited){
         for(Integer neighbor : getNeighbors(current)){
             if(isVisited[neighbor] == false)
                 return neighbor;

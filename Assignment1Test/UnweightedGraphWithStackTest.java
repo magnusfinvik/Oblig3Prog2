@@ -3,6 +3,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
@@ -58,7 +59,7 @@ public class UnweightedGraphWithStackTest {
     }
 
     @Test
-    public void dfstest_checkThatTheCorrectNumberOferticesIsVisited_goingFromB () {
+    public void dfstest_checkThatTheCorrectNumberOfVerticesIsVisited_goingFromB () {
         AbstractGraph<Character>.Tree dfs = graph.dfs(1);
 
         int numberOfVerticesFound = dfs.getNumberOfVerticesFound();
@@ -75,7 +76,7 @@ public class UnweightedGraphWithStackTest {
     }
 
     @Test
-    public void dfstest_findingAllStepsFromVerticeD() {
+    public void dfstest_findingAllStepsFromVertixD() {
         AbstractGraph<Character>.Tree dfs = graph.dfs(3);
 
         List<Integer> searchOrder = dfs.getSearchOrder();
@@ -85,7 +86,7 @@ public class UnweightedGraphWithStackTest {
     }
 
     @Test
-    public void dfstest_findingAllStepsFromVerticeA() {
+    public void dfstest_findingAllStepsFromVertixA() {
         AbstractGraph<Character>.Tree dfs = graph.dfs(0);
 
         List<Integer> searchOrder = dfs.getSearchOrder();
@@ -96,10 +97,16 @@ public class UnweightedGraphWithStackTest {
     }
 
     @Test
-    public void getPath_checkThatTheFirstStepIsCorrect_shouldBeTheStartinVertice() {
-        List<Character> path = graph.getPath(0, 3);
+    public void getPath_checkThatTheFirstStepIsCorrect_shouldBeTheStartingVertix() {
+        List<Integer> path = graph.getPath(0, 3);
 
         assertEquals(0, (int) path.get(0));
+    }
+
+    @Test
+    public void getPath_checkThatTheWholePathIsCorrect_shouldBe013() {
+        List<Integer> path = graph.getPath(0, 3);
+        assertEquals("[0, 1, 3]", path.toString());
     }
 
     @Test
@@ -107,4 +114,14 @@ public class UnweightedGraphWithStackTest {
         assertTrue(graph.isConnected());
     }
 
+    @Test
+    public void isConnected_addingAnotherVertixToMakeItANotConnectedGraph_returnFalse() {
+        graph.addVertex('E');
+        assertFalse(graph.isConnected());
+    }
+
+    @Test
+    public void isCycle_checkThatTheGraphHasNoCycles_returnsTrue() {
+        assertFalse(graph.isCyclic());
+    }
 }

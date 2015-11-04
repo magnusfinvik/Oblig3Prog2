@@ -150,30 +150,29 @@ public abstract class AbstractGraph<V> implements Graph<V> {
     }
 
     @Override
-    public Tree dfs(int startingVertix) {
+    public Tree dfs(int startingVertex) {
         Deque<Integer> stack = new ArrayDeque<>();
         List<Integer> searchOrder = new ArrayList<>();
         boolean[] isVisited = new boolean[vertices.size()];
         int[] parent = new int[vertices.size()];
         setAllParentsToMinusOne(parent);
 
-        int currentVertix = startingVertix;
-        stack.push(currentVertix);
-        searchOrder.add(currentVertix);
-        isVisited[currentVertix] = true;
+        int currentVertex = startingVertex;
+        stack.push(currentVertex);
+        searchOrder.add(currentVertex);
+        isVisited[currentVertex] = true;
 
         while(!stack.isEmpty()){
-            int neighbor = getNextUnvisitedVertix(currentVertix, isVisited);
+            int neighbor = getNextUnvisitedVertex(currentVertex, isVisited);
             if(neighbor == -1) {
                 stack.pop();
                 if(!stack.isEmpty())
-                    currentVertix = stack.peek();
+                    currentVertex = stack.peek();
             }
             else
-                currentVertix = jumpToNextVertix(stack, searchOrder, isVisited, parent, currentVertix, neighbor);
+                currentVertex = jumpToNextVertex(stack, searchOrder, isVisited, parent, currentVertex, neighbor);
         }
-
-        return new Tree(startingVertix, parent, searchOrder);
+        return new Tree(startingVertex, parent, searchOrder);
     }
 
     private void setAllParentsToMinusOne(int[] parent) {
@@ -181,16 +180,16 @@ public abstract class AbstractGraph<V> implements Graph<V> {
             parent[i] = -1;
     }
 
-    private int jumpToNextVertix(Deque<Integer> stack, List<Integer> searchOrder, boolean[] isVisited, int[] parent, int currentVertix, int neighbor) {
+    private int jumpToNextVertex(Deque<Integer> stack, List<Integer> searchOrder, boolean[] isVisited, int[] parent, int currentVertex, int neighbor) {
         searchOrder.add(neighbor);
-        parent[neighbor] = currentVertix;
+        parent[neighbor] = currentVertex;
         isVisited[neighbor] = true;
         stack.push(neighbor);
-        currentVertix = neighbor;
-        return currentVertix;
+        currentVertex = neighbor;
+        return currentVertex;
     }
 
-    private int getNextUnvisitedVertix(int current, boolean[] isVisited){
+    private int getNextUnvisitedVertex(int current, boolean[] isVisited){
         for(Integer neighbor : getNeighbors(current)){
             if(isVisited[neighbor] == false)
                 return neighbor;
@@ -230,8 +229,36 @@ public abstract class AbstractGraph<V> implements Graph<V> {
     }
 
     public boolean isCyclic() {
+        for(int i = 0; i < vertices.size(); i++){
+            if(isCyclicHelper(i))
+                return true;
+        }
+        return false;
+    }
 
-        return true;
+    private boolean isCyclicHelper(int vertex) {
+        int[] parent = new int[vertices.size()];
+        setAllParentsToMinusOne(parent);
+
+        java.util.LinkedList<Integer> queue = new java.util.LinkedList<>();
+        boolean[] isVisited = new boolean[vertices.size()];
+        queue.offer(vertex);
+        isVisited[vertex] = true;
+
+        while (!queue.isEmpty()) {
+            int u = queue.poll();
+            for (Edge e: neighbors.get(u)) {
+                if(isVisited[e.v] && e.v != parent[u]){
+                    return true;
+                }
+                else if (!isVisited[e.v]) {
+                    queue.offer(e.v);
+                    parent[e.v] = u;
+                    isVisited[e.v] = true;
+                }
+            }
+        }
+        return false;
     }
 
     public List<Integer> getPath(int start, int end){

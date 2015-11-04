@@ -1,10 +1,6 @@
 import org.junit.Test;
-
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 /*
@@ -68,7 +64,7 @@ public class UnweightedGraphWithStackTest {
     }
 
     @Test
-    public void dfstest_checkThatTheFirstVertixAfterAIsCorrect_goingFromA() {
+    public void dfstest_checkThatTheFirstVertexAfterAIsCorrect_goingFromA() {
         AbstractGraph<Character>.Tree dfs = graph.dfs(0);
 
         List<Integer> searchOrder = dfs.getSearchOrder();
@@ -76,28 +72,25 @@ public class UnweightedGraphWithStackTest {
     }
 
     @Test
-    public void dfstest_findingAllStepsFromVertixD() {
+    public void dfstest_findingAllStepsFromVertexD() {
         AbstractGraph<Character>.Tree dfs = graph.dfs(3);
 
         List<Integer> searchOrder = dfs.getSearchOrder();
-        assertEquals(1, (int) searchOrder.get(1));
-        assertEquals(0, (int) searchOrder.get(2));
-        assertEquals(2, (int) searchOrder.get(3));
+        assertEquals("[3, 1, 0, 2]", searchOrder.toString());
     }
 
     @Test
-    public void dfstest_findingAllStepsFromVertixA() {
+    public void dfstest_findingAllStepsFromVertexA() {
         AbstractGraph<Character>.Tree dfs = graph.dfs(0);
 
         List<Integer> searchOrder = dfs.getSearchOrder();
-        assertEquals(0, (int) searchOrder.get(0));
-        assertEquals(1, (int) searchOrder.get(1));
-        assertEquals(3, (int) searchOrder.get(2));
-        assertEquals(2, (int) searchOrder.get(3));
+        assertEquals("[0, 1, 3, 2]", searchOrder.toString());
     }
 
+    //legg til tester med annen graph
+
     @Test
-    public void getPath_checkThatTheFirstStepIsCorrect_shouldBeTheStartingVertix() {
+    public void getPath_checkThatTheFirstStepIsCorrect_shouldBeTheStartingVertex() {
         List<Integer> path = graph.getPath(0, 3);
 
         assertEquals(0, (int) path.get(0));
@@ -109,19 +102,35 @@ public class UnweightedGraphWithStackTest {
         assertEquals("[0, 1, 3]", path.toString());
     }
 
+    //legg til ekstra tester på getPath, med andre stier, og andre grapher
+
     @Test
     public void isConnected_checkThatTheGraphIsConnected_returnTrue() {
         assertTrue(graph.isConnected());
     }
 
     @Test
-    public void isConnected_addingAnotherVertixToMakeItANotConnectedGraph_returnFalse() {
+    public void isConnected_addingAnotherVertexToMakeItANotConnectedGraph_returnFalse() {
         graph.addVertex('E');
         assertFalse(graph.isConnected());
     }
 
     @Test
     public void isCycle_checkThatTheGraphHasNoCycles_returnsTrue() {
-        assertFalse(graph.isCyclic());
+        assertTrue(graph.isCyclic());
+    }
+
+    @Test
+    public void isCycle_usingAdifferentGraphThatIsntCyclic_returnFalse() {
+        Character[] vertices = {'A', 'B', 'C'};
+
+        int[][] edges = {
+                {0, 1},
+                {1, 0}, {1, 2},
+                {2, 1}
+        };
+
+        Graph<Character> graphWithoutCycle = new UnweightedGraphWithStack<>(vertices, edges);
+        assertFalse(graphWithoutCycle.isCyclic());
     }
 }

@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+
 public interface MyMap<K, V> {
 
     public void clear();
@@ -24,24 +26,29 @@ public interface MyMap<K, V> {
 
     public static class Entry<K, V> {
         K key;
-        V value;
+        LinkedList<V> valueList;
 
         public Entry(K key, V value) {
             this.key = key;
-            this.value = value;
+            valueList  = new LinkedList<>();
+            valueList.add(value);
         }
 
         public K getKey() {
             return key;
         }
 
-        public V getValue() {
-            return value;
+        public LinkedList<V> getValues() {
+            return valueList;
         }
 
         @Override
         public String toString() {
-            return "[" + key + ", " + value + "]";
+            return "[" + key + ", " + valueList + "]";
+        }
+
+        public LinkedList<V> getValue() {
+            return valueList;
         }
     }
 }    

@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
     setter current til startHjørne
     push current på stack, add til søkeOrden
     og sett den til besøkt
-    så lenge stack ikke er tom
+    loop: så lenge stack ikke er tom
         nabo = finn neste ikke besøkte hjørne (hjelpemetode)
         hvis nabo = -1
             pop øverste element fra stack

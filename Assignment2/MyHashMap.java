@@ -1,4 +1,5 @@
 import java.util.LinkedList;
+import java.util.Set;
 
 public class MyHashMap<K, V> implements MyMap<K, V> {
 
@@ -15,6 +16,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
     private int size = 0;
 
     LinkedList<MyMap.Entry<K,V>>[] table;
+
 
     public MyHashMap() {
         this(DEFAULT_INITIAL_CAPACITY, DEFAULT_MAX_LOAD_FACTOR);
@@ -54,7 +56,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
             if (table[i] != null) {
                 LinkedList<Entry<K, V>> bucket = table[i];
                 for (Entry<K, V> entry: bucket)
-                    if (entry.getValue().equals(value))
+                    if (entry.getValue().contains(value))
                         return true;
             }
         }
@@ -64,8 +66,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
 
     @Override
     public java.util.Set<MyMap.Entry<K,V>> entrySet() {
-        java.util.Set<MyMap.Entry<K, V>> set =
-                new java.util.HashSet<>();
+        java.util.Set<MyMap.Entry<K, V>> set = new java.util.HashSet<>();
 
         for (int i = 0; i < capacity; i++) {
             if (table[i] != null) {
@@ -83,11 +84,28 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
         int bucketIndex = hash(key.hashCode());
         if (table[bucketIndex] != null) {
             LinkedList<Entry<K, V>> bucket = table[bucketIndex];
-            for (Entry<K, V> entry: bucket)
+            for (Entry<K, V> entry: bucket) {
                 if (entry.getKey().equals(key))
-                    return entry.getValue();
+                    return entry.getValue().getFirst();
+            }
         }
+        return null;
+    }
 
+    public Set<V> getAll(K key) {
+        java.util.Set<V> set = new java.util.HashSet<>();
+        int bucketIndex = hash(key.hashCode());
+        if(table[bucketIndex] != null) {
+            LinkedList<Entry<K, V>> bucket = table[bucketIndex];
+            for(Entry<K, V> entry : bucket) {
+                if(entry.getKey().equals(key)){
+                    for(V value : entry.valueList)
+                        set.add(value);
+                    return set;
+                }
+            }
+
+        }
         return null;
     }
 
@@ -118,9 +136,8 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
             LinkedList<Entry<K, V>> bucket = table[bucketIndex];
             for (Entry<K, V> entry: bucket)
                 if (entry.getKey().equals(key)) {
-                    V oldValue = entry.getValue();
-                    entry.value = value;
-                    return oldValue;
+                    entry.valueList.addLast(value);
+                    return value;
                 }
         }
 
@@ -167,12 +184,12 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
     @Override
     public java.util.Set<V> values() {
         java.util.Set<V> set = new java.util.HashSet<>();
-
         for (int i = 0; i < capacity; i++) {
             if (table[i] != null) {
                 LinkedList<Entry<K, V>> bucket = table[i];
                 for (Entry<K, V> entry: bucket)
-                    set.add(entry.getValue());
+                    for(V value : entry.valueList)
+                        set.add(value);
             }
         }
 
@@ -212,7 +229,8 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
         size = 0;
 
         for (Entry<K, V> entry: set) {
-            put(entry.getKey(), entry.getValue());
+            for(V value : entry.valueList)
+                put(entry.getKey(), value);
         }
     }
 

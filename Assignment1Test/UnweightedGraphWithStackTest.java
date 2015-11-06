@@ -1,5 +1,7 @@
 import org.junit.Test;
+
 import java.util.List;
+
 import static org.junit.Assert.*;
 
 
@@ -12,9 +14,9 @@ import static org.junit.Assert.*;
     push current på stack, add til søkeOrden
     og sett den til besøkt
     loop: så lenge stack ikke er tom
-        nabo = finn neste ikke besøkte hjørne (hjelpemetode)
+        finn neste nabo
         hvis nabo = -1
-            pop øverste element fra stack
+            hent øverste element fra stack
         ellers
             legg til nabo i søkeOrden
             sett forelder til nabo til current
@@ -24,7 +26,7 @@ import static org.junit.Assert.*;
 
     returner et nytt tre av (startHjørne, foreldreListen, søkeOrden)
 
-    hjelpemetode
+    hjelpemetode for å hente neste nabo
         for hver nabo til current
             hvis nabo ikke er besøkt
                 returner nabo
@@ -41,14 +43,23 @@ public class UnweightedGraphWithStackTest {
             {3, 1}
     };
 
+    String[] cityVertices = {"bodø", "tromsø", "trondheim", "oslo"};
+
+    int[][] cityEdges = {
+            {0, 2}, {0, 3},
+            {1, 0}, {1, 2},
+            {2, 0}, {2, 3},
+            {3, 1}, {3, 0}
+    };
+
+    Graph<String> cityGraph = new UnweightedGraphWithStack<>(cityVertices, cityEdges);
+
     Graph<Character> graph = new UnweightedGraphWithStack<>(vertices, edges);
 
 
     @Test
     public void dfstest_checkThatTheCorrectAmountOfVerticesIsAddedToTheVisitedList_goingFromA() {
-
         AbstractGraph<Character>.Tree dfs = graph.dfs(0);
-
         int numberOfVerticesFound = dfs.getNumberOfVerticesFound();
 
         assertEquals(4, numberOfVerticesFound);
@@ -57,7 +68,6 @@ public class UnweightedGraphWithStackTest {
     @Test
     public void dfstest_checkThatTheCorrectNumberOfVerticesIsVisited_goingFromB () {
         AbstractGraph<Character>.Tree dfs = graph.dfs(1);
-
         int numberOfVerticesFound = dfs.getNumberOfVerticesFound();
 
         assertEquals(4, numberOfVerticesFound);
@@ -87,7 +97,21 @@ public class UnweightedGraphWithStackTest {
         assertEquals("[0, 1, 3, 2]", searchOrder.toString());
     }
 
-    //legg til tester med annen graph
+    @Test
+    public void dfsTest_findingAllStepsFromBodo() {
+        AbstractGraph<String>.Tree dfs = cityGraph.dfs(0);
+
+        List<Integer> searchOrder = dfs.getSearchOrder();
+        assertEquals("[0, 2, 3, 1]", searchOrder.toString());
+    }
+
+    @Test
+    public void dfsTest_findingAllStepsFromTrondheim() {
+        AbstractGraph<String>.Tree dfs = cityGraph.dfs(2);
+
+        List<Integer> searchOrder = dfs.getSearchOrder();
+        assertEquals("[2, 0, 3, 1]", searchOrder.toString());
+    }
 
     @Test
     public void getPath_checkThatTheFirstStepIsCorrect_shouldBeTheStartingVertex() {
@@ -102,7 +126,17 @@ public class UnweightedGraphWithStackTest {
         assertEquals("[0, 1, 3]", path.toString());
     }
 
-    //legg til ekstra tester på getPath, med andre stier, og andre grapher
+    @Test
+    public void getPath_checkThatThePathIsCorrectFromBodoToTrondheim_shouldBe02() {
+        List<Integer> path = cityGraph.getPath(0, 2);
+        assertEquals("[0, 2]", path.toString());
+    }
+
+    @Test
+    public void getPath_checkThatThePathIsCorrectFromOsloToTrondheim_shouldBe312() {
+        List<Integer> path = cityGraph.getPath(3, 2);
+        assertEquals("[3, 1, 2]", path.toString());
+    }
 
     @Test
     public void isConnected_checkThatTheGraphIsConnected_returnTrue() {
